@@ -1,4 +1,5 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
 contract ProofOfExistence2 {
 
@@ -10,7 +11,7 @@ contract ProofOfExistence2 {
   function storeProof(bytes32 proof) 
     public 
   {
-  
+    proofs.push(proof);
   }
 
   // calculate and store the proof for a document
@@ -18,7 +19,8 @@ contract ProofOfExistence2 {
   function notarize(string calldata document) 
     external 
   {
-
+    bytes32 proof = proofFor(document);
+    storeProof(proof);
   }
 
   // helper function to get a document's sha256
@@ -28,7 +30,7 @@ contract ProofOfExistence2 {
     public 
     returns (bytes32) 
   {
-    
+    return sha256(abi.encode(document));
   }
 
   // check if a document has been notarized
@@ -38,7 +40,7 @@ contract ProofOfExistence2 {
     view 
     returns (bool) 
   {
-    
+    return hasProof(proofFor(document));
   }
 
   // returns true if proof is stored
@@ -48,5 +50,11 @@ contract ProofOfExistence2 {
     view 
     returns (bool) 
   {
-   
+    for(uint256 i = 0; i < proofs.length; i++) {
+      if(proofs[i] == proof) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
